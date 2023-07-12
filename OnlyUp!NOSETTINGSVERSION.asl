@@ -54,23 +54,14 @@ startup
 {
 	// central point coords x/y/z and radius for each sphere
 	vars.splits = new double[][] {
-		new double[] { 2433.23, 5994.06, 1943.62, 106 }, // Pipes
-		new double[] { 3537.17, 17051.4, 9916.54, 1600 }, // Train station
-		new double[] { -2794.33, 11254.3, 50514.1, 306 }, // Drone
-		new double[] { 4235.71, 12152.4, 90037.1, 105 }, // Elevator
-		new double[] { 1064.72, 3701.3, 156054, 453 }, // Hand
-		new double[] { -12363.2, 21183.6, 189660, 984 }, // Ship
+		new double[] { 2433.23, 5994.06, 1943.62, 106*106 }, // Pipes
+		new double[] { 3537.17, 17051.4, 9916.54, 1600*1600 }, // Train station
+		new double[] { -2794.33, 11254.3, 50514.1, 306*306 }, // Drone
+		new double[] { 4235.71, 12152.4, 90037.1, 105*105 }, // Elevator
+		new double[] { 1064.72, 3701.3, 156054, 453*453 }, // Hand
+		new double[] { -12363.2, 21183.6, 189660, 984*984 }, // Ship
 	};
 	vars.currSplit = 0;
-
-	Func<double, double, double, double, double, double, double> GetDistance = (x1, y1, z1, x2, y2, z2) => {
-		double dx = x2 - x1;
-		double dy = y2 - y1;
-		double dz = z2 - z1;
-
-		return Math.Sqrt(dx * dx + dy * dy + dz * dz);
-	};
-	vars.GetDistance = GetDistance;
 
 	timer.OnUndoSplit += (s, e) => {
 		if (vars.currSplit > 0)
@@ -164,10 +155,11 @@ split
 	{
 		var seg = vars.splits[vars.currSplit];
 
-		double dist = vars.GetDistance(current.coordX, current.coordY, current.coordZ, seg[0], seg[1], seg[2]);
-		double radius = seg[3];
+		double dx = current.coordX - seg[0];
+		double dy = current.coordY - seg[1];
+		double dz = current.coordZ - seg[2];
 
-		if (dist <= radius)
+		if (dx * dx + dy * dy + dz * dz <= seg[3])
 			return true;
 	}
 	else if (memory.ReadValue<int>((IntPtr)vars.endSeqPtr) > 0) // End Split

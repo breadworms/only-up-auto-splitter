@@ -53,24 +53,15 @@ state("OnlyUP-Win64-Shipping")    // pointer paths
 startup
 {
 	// central point coords x/y/z and radius for each sphere
-	vars.splitsCoords = new Dictionary<string, double[]> {
-		{ "Pipe Maze Start", new double[] {2433.23, 5994.06, 1943.62, 106} },
-		{ "Train Station", new double[] {3537.17, 17051.4, 9916.54, 1600} },
-		{ "Drone", new double[] {-2794.33, 11254.3, 50514.1, 306} },
-		{ "Elevator", new double[] {4235.71, 12152.4, 90037.1, 105} },
-		{ "Hand", new double[] {1064.72, 3701.3, 156054, 453} },
-		{ "Ship", new double[] {-12363.2, 21183.6, 189660, 984} },
+	vars.splits = new double[][] {
+		new double[] { 2433.23, 5994.06, 1943.62, 106 }, // Pipes
+		new double[] { 3537.17, 17051.4, 9916.54, 1600 }, // Train station
+		new double[] { -2794.33, 11254.3, 50514.1, 306 }, // Drone
+		new double[] { 4235.71, 12152.4, 90037.1, 105 }, // Elevator
+		new double[] { 1064.72, 3701.3, 156054, 453 }, // Hand
+		new double[] { -12363.2, 21183.6, 189660, 984 }, // Ship
 	};
-
 	vars.currSplit = 0;
-	vars.splits = new List<string> {
-		"Pipe Maze Start",
-		"Train Station",
-		"Drone",
-		"Elevator",
-		"Hand",
-		"Ship",
-	};
 
 	Func<double, double, double, double, double, double, double> GetDistance = (x1, y1, z1, x2, y2, z2) => {
 		double dx = x2 - x1;
@@ -86,7 +77,7 @@ startup
 			vars.currSplit--;
 	};
 	timer.OnSkipSplit += (s, e) => {
-		if (vars.currSplit < vars.splits.Count)
+		if (vars.currSplit < vars.splits.Length)
 			vars.currSplit++;
 	};
 
@@ -169,12 +160,12 @@ start
 
 split
 {
-	if (vars.currSplit < vars.splits.Count)
+	if (vars.currSplit < vars.splits.Length)
 	{
 		var seg = vars.splits[vars.currSplit];
 
-		double dist = vars.GetDistance(current.coordX, current.coordY, current.coordZ, vars.splitsCoords[seg][0], vars.splitsCoords[seg][1], vars.splitsCoords[seg][2]);
-		double radius = vars.splitsCoords[seg][3];
+		double dist = vars.GetDistance(current.coordX, current.coordY, current.coordZ, seg[0], seg[1], seg[2]);
+		double radius = seg[3];
 
 		if (dist <= radius)
 			return true;
@@ -188,10 +179,8 @@ split
 
 onSplit
 {
-	if (vars.currSplit < vars.splits.Count)
-	{
+	if (vars.currSplit < vars.splits.Length)
 		vars.currSplit++;
-	}
 }
 
 onReset

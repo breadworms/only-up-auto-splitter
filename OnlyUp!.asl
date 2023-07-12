@@ -44,8 +44,6 @@ state("OnlyUP-Win64-Shipping")    // pointer paths
 	double coordX  : 0x073C5ED8, 0x180, 0xA0, 0x98, 0xA8, 0x60, 0x328, 0x260;
 	double coordY  : 0x073C5ED8, 0x180, 0xA0, 0x98, 0xA8, 0x60, 0x328, 0x268;
 	double coordZ  : 0x073C5ED8, 0x180, 0xA0, 0x98, 0xA8, 0x60, 0x328, 0x270;
-	double velocX  : 0x07356580, 0x0, 0x30, 0xA8, 0x50, 0xAB8, 0x20, 0x320, 0xB8;
-	double velocY  : 0x07356580, 0x0, 0x30, 0xA8, 0x50, 0xAB8, 0x20, 0x320, 0xC0;
 	ulong GObjects : 0x07356580, 0x0, 0x30, 0xA8, 0x50, 0xAB8, 0x20, 0x0;
 	bool bIsMoving : 0x07356580, 0x0, 0x30, 0xA8, 0x50, 0xAB8, 0x20, 0x678;
 	bool bLocView  : 0x07356580, 0x0, 0x30, 0xA8, 0x50, 0xAB8, 0x20, 0x298;
@@ -61,16 +59,6 @@ startup
 		new double[] { 4235.71, 12152.4, 90037.1, 105*105 }, // Elevator
 		new double[] { 1064.72, 3701.3, 156054, 453*453 }, // Hand
 		new double[] { -12363.2, 21183.6, 189660, 984*984 }, // Ship
-	};
-	vars.currSplit = 0;
-
-	timer.OnUndoSplit += (s, e) => {
-		if (vars.currSplit > 0)
-			vars.currSplit--;
-	};
-	timer.OnSkipSplit += (s, e) => {
-		if (vars.currSplit < vars.splits.Length)
-			vars.currSplit++;
 	};
 
 	refreshRate = 30;
@@ -110,9 +98,9 @@ start
 
 split
 {
-	if (vars.currSplit < vars.splits.Length)
+	if (timer.CurrentSplitIndex < vars.splits.Length)
 	{
-		var seg = vars.splits[vars.currSplit];
+		var seg = vars.splits[timer.CurrentSplitIndex];
 
 		double dx = current.coordX - seg[0];
 		double dy = current.coordY - seg[1];
@@ -123,15 +111,4 @@ split
 	}
 	else if (!current.bLocView) // End Split
 		return true;
-}
-
-onSplit
-{
-	if (vars.currSplit < vars.splits.Length)
-		vars.currSplit++;
-}
-
-onReset
-{
-	vars.currSplit = 0;
 }

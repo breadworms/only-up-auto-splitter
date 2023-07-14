@@ -53,7 +53,7 @@ startup
 {
 	// central point coords x/y/z and radius for each sphere
 	vars.splits = new double[][] {
-		new double[] { 2433.23, 5994.06, 1943.62, 106*106 }, // Pipes
+		new double[] { 2357.19, 6094.68, 2026.14, 190*190 }, // Pipes
 		new double[] { 3537.17, 17051.4, 9916.54, 1600*1600 }, // Train station
 		new double[] { -2794.33, 11254.3, 50514.1, 306*306 }, // Drone
 		new double[] { 4235.71, 12152.4, 90037.1, 105*105 }, // Elevator
